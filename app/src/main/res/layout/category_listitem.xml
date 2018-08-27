@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#ffffff">
+
+    <RelativeLayout
+        android:layout_width="match_parent" android:layout_margin="2dp"
+        android:layout_height="wrap_content" android:background="#d4d4d4">
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/category_title"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:padding="10dip"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/toggle_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/toggle_button"
+            android:scaleType="fitXY" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:animateLayoutChanges="true">
+        <GridView
+            android:id="@+id/subCatList"
+            android:layout_width="450dp"
+            android:layout_centerHorizontal="true"
+            android:numColumns="3"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+</LinearLayout>
