@@ -42,8 +42,7 @@ public class ProductListAdapter extends BaseAdapter{
 
     public ProductListAdapter(Context context, List<Product> products){
         this.context=context;
-        productList.clear();
-        productList.addAll(products);
+        productList=products;
     }
     @Override
     public int getCount() {
@@ -62,52 +61,53 @@ public class ProductListAdapter extends BaseAdapter{
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        LayoutInflater mInflater = (LayoutInflater)
-                context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        if (view == null) {
-            view = mInflater.inflate(R.layout.product_listitem, null);
-            ((TextView)view.findViewById(R.id.product_title)).setText(productList.get(i).productName);
-            SimpleDateFormat formatIn = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.000Z'");
-            SimpleDateFormat formatOut = new SimpleDateFormat("dd MMM yyyy");
-            try{
-                Date date = formatIn.parse(productList.get(i).dateAdded);
-                ((TextView)view.findViewById(R.id.added_on_text)).setText(formatOut.format(date));
-            }catch (ParseException pe){
-                Log.e(TAG,"ParseException : " + pe.getMessage());
-                ((TextView)view.findViewById(R.id.added_on_text)).setText("-");
-            }
-            ((TextView)view.findViewById(R.id.view_count_text)).setText(""+productList.get(i).viewCount);
-            view.findViewById(R.id.view_count_cont).setVisibility((productList.get(i).viewCount>0)?View.VISIBLE:View.INVISIBLE);
-            ((TextView)view.findViewById(R.id.ordered_count_text)).setText(""+productList.get(i).orderCount);
-            view.findViewById(R.id.order_count_cont).setVisibility((productList.get(i).orderCount>0)?View.VISIBLE:View.INVISIBLE);
-            ((TextView)view.findViewById(R.id.shared_count_text)).setText(""+productList.get(i).shareCount);
-            view.findViewById(R.id.share_count_cont).setVisibility((productList.get(i).shareCount>0)?View.VISIBLE:View.INVISIBLE);
-
-            ((TextView)view.findViewById(R.id.final_price_label)).setText("With " + productList.get(i).taxName + "("+ productList.get(i).taxValue +"%)");
-
-            final View tmpView = view;
-            final int thisIndex=i;
-            ((GridView)view.findViewById(R.id.variant_grid)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int gridIndex, long l) {
-                    Log.i(TAG,"_____________CLICK VARIANT");
-                    view.findViewById(R.id.variant_item_cont).setSelected(true);
-                    ((TextView)tmpView.findViewById(R.id.price_text)).setText("\u20B9 "+l);
-                    ((TextView)tmpView.findViewById(R.id.final_price_text)).setText("\u20B9 "+ (l+(l*(productList.get(thisIndex).taxValue/100))));
-                }
-            });
-            new LoadProductVariants().execute(new LoadVariantsParams(productList.get(i).prod_id, new Callback() {
-                @Override
-                public void taskCompleted(Object param) {
-                    ((GridView)tmpView.findViewById(R.id.variant_grid)).setAdapter(new VariantsListAdapter(context,(List<Variants>)param));
-                }
-
-                @Override
-                public void taskStarted() {
-
-                }
-            }));
+        LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        view = mInflater.inflate(R.layout.product_listitem, null);
+        ((TextView)view.findViewById(R.id.product_title)).setText(productList.get(i).productName);
+        SimpleDateFormat formatIn = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.000Z'");
+        SimpleDateFormat formatOut = new SimpleDateFormat("dd MMM yyyy");
+        try{
+            Date date = formatIn.parse(productList.get(i).dateAdded);
+            ((TextView)view.findViewById(R.id.added_on_text)).setText(formatOut.format(date));
+        }catch (ParseException pe){
+            Log.e(TAG,"ParseException : " + pe.getMessage());
+            ((TextView)view.findViewById(R.id.added_on_text)).setText("-");
         }
+        ((TextView)view.findViewById(R.id.view_count_text)).setText(""+productList.get(i).viewCount);
+        view.findViewById(R.id.view_count_cont).setVisibility((productList.get(i).viewCount>0)?View.VISIBLE:View.INVISIBLE);
+        ((TextView)view.findViewById(R.id.ordered_count_text)).setText(""+productList.get(i).orderCount);
+        view.findViewById(R.id.order_count_cont).setVisibility((productList.get(i).orderCount>0)?View.VISIBLE:View.INVISIBLE);
+        ((TextView)view.findViewById(R.id.shared_count_text)).setText(""+productList.get(i).shareCount);
+        view.findViewById(R.id.share_count_cont).setVisibility((productList.get(i).shareCount>0)?View.VISIBLE:View.INVISIBLE);
+
+        ((TextView)view.findViewById(R.id.final_price_label)).setText("With " + productList.get(i).taxName + "("+ productList.get(i).taxValue +"%)");
+
+        final View tmpView = view;
+        final int thisIndex=i;
+        ((GridView)view.findViewById(R.id.variant_grid)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int gridIndex, long l) {
+                Log.i(TAG,"_____________CLICK VARIANT");
+                view.findViewById(R.id.variant_item_cont).setSelected(true);
+                ((TextView)tmpView.findViewById(R.id.price_text)).setText("\u20B9 "+l);
+                ((TextView)tmpView.findViewById(R.id.final_price_text)).setText("\u20B9 "+ (l+(l*(productList.get(thisIndex).taxValue/100))));
+            }
+        });
+        new LoadProductVariants().execute(new LoadVariantsParams(productList.get(i).prod_id, new Callback() {
+            @Override
+            public void taskCompleted(Object param) {
+                ((GridView)tmpView.findViewById(R.id.variant_grid)).setAdapter(new VariantsListAdapter(context,(List<Variants>)param));
+                ViewGroup.LayoutParams lp = ((GridView)tmpView.findViewById(R.id.variant_grid)).getLayoutParams();
+                lp.height=((lp.height+5)*((List<Variants>) param).size()/2);
+                ((GridView)tmpView.findViewById(R.id.variant_grid)).setLayoutParams(lp);
+                tmpView.invalidate();
+            }
+
+            @Override
+            public void taskStarted() {
+
+            }
+        }));
         return view;
     }
     private class LoadVariantsParams{

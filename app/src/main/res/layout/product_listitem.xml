@@ -111,7 +111,7 @@
                     tools:listitem="@layout/variants_listitem"
                     android:horizontalSpacing="2dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:numColumns="2">
+                    android:layout_height="20dp" android:numColumns="2">
                 </GridView>
             </RelativeLayout>
             <LinearLayout
