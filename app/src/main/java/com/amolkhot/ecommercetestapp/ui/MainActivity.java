@@ -112,7 +112,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-//        if(drawer.isDrawerOpen(nav_view)) drawer.closeDrawer(nav_view);
+        if (drawer.isDrawerOpen(nav_view)) {
+            if(categories.size()>0) closeNavigationDrawer();
+        } else {
+            openNavigationDrawer();
+        }
     }
 
     private void openNavigationDrawer(){
